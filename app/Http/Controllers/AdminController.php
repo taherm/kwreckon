@@ -6,67 +6,120 @@ use Illuminate\Http\Request;
 use App\Service;
 use App\Slider;
 use App\Menu;
+use Intervention\Image\Facades\Image;
+use File;
+
 
 
 class AdminController extends Controller
 {
-    
+    const UPLOAD_PATH =  '/uploads/';
 
     public function index()
     {
-        $ser=Service::all();
-        return view('admin.index',compact('ser'));
+      //  $ser=Service::all();
+        return view('admin.index',compact(session('message')));
     }
+
+    public function show()
+    {
+        $ser=Service::all();
+        return view('admin.pages',compact('ser'));
+    }
+
 
     public function delete_slider()
     {
-       
         Slider::where('image',request('image'))->delete();
-
+        session()->flash('message','Slider Deleted!');
+        
         return redirect('/admin/delete-slider');
     }
-    public function add_slider()
+
+    public function add_slider(Request $request)
     {
+        
+        $this->validate(request(),[
+            'image'=>'required'
+             ]);
         $slide=new Slider;
-        $temp=request('image');
-        $filename='img/slider/'.$temp;
-        $slide->image=$filename;
-       
+        $image=request()->image;
+        $imageName = md5(uniqid(rand() * (time()))) . '.' . $image->getClientOriginalExtension();
+        $savePath = public_path(self::UPLOAD_PATH . $imageName);
+        Image::make($image)->save($savePath, 100);
+        $fullImagePath =$imageName;
+        $slide->image=$fullImagePath;
+        
         $slide->save();
+        session()->flash('message','Slider Added!');
+        
         return redirect('/admin');
     }
 
+    public function add_album(Request $request)
+    {
+        $this->validate(request(),[
+            'image'=>'required'
+             ]);
+        $album=new Album;
+        $image=request()->image;
+        $imageName = md5(uniqid(rand() * (time()))) . '.' . $image->getClientOriginalExtension();
+        $savePath = public_path(self::UPLOAD_PATH . $imageName);
+        Image::make($image)->save($savePath, 100);
+        $fullImagePath =$imageName;
+        $album->image=$fullImagePath;
+        $album->save();
+        session()->flash('message','Image Added!');
+        return redirect('/admin/add-album');
+    }
+
+    public function delete_album()
+    {
+        $album=Album::find(request('image'));
+        File::delete('uploads/'.$album->image);
+        $album->delete();
+        session()->flash('message','Image Deleted!');
+        
+        return redirect('/admin/delete-album');
+    }
+
+    
+
+    public function edit_menu($id)
+    {
+        $serv=Menu::find($id);
+        return view('admin.menu_edit',compact('serv'));
+    }
+    
 
     public function submenu()
     {
-       
-         $menu=new Menu;
-         $menu->title=request('title');
-         
+        $this->validate(request(),[
+        'title'=>'required'
+         ]);
+        $menu=new Menu;
+        $menu->title=request('title');
         $menu->parent_id=Menu::where('title',request('submenu'))->first()->id;
-        
-         
-         $menu->url="menu/".request('title');
-         $menu->save();
-        //$temp= File::get("C://xampp/htdocs/pim/resources/views/layouts/new-service-layout.blade.php");
-        //File::put("C://xampp/htdocs/pim/resources/views/services/".request('title').'.blade.php',$temp);
-         //dd(request()->all());
-         return redirect('/admin');
+        $menu->url="";
+        $menu->save();
+        return redirect('/admin');
     }
 
+    
     public function mainmenu()
     {
-       
-         $menu=new Menu;
-         $menu->title=request('title');
-         
-        $menu->parent_id='0';
-        $menu->url="menu/".request('title');
-         $menu->save();
-        //$temp= File::get("C://xampp/htdocs/pim/resources/views/layouts/new-service-layout.blade.php");
-        //File::put("C://xampp/htdocs/pim/resources/views/services/".request('title').'.blade.php',$temp);
-         //dd(request()->all());
-         return redirect('/admin');
+        $this->validate(request(), [
+            'title_en' => 'required'
+        ]);
+        $this->validate(request(), [
+            'title_ar' => 'required'
+        ]);
+        $menu = new Menu();
+        $menu->title_en = request('title_en');
+        $menu->title_ar = request('title_ar');
+        $menu->save();
+        session()->flash('message','Main Menu Added!');
+        return redirect('/admin');
     }
 
 
@@ -78,101 +131,93 @@ class AdminController extends Controller
 
     public function update($id)
     {
-        //dd('stopo here');
-        $this->validate(request(),[
-        'title'=>'required',
-        'description'=>'required',
-        'image'=>'required'
-         ]);
-        
         $serv=Service::find($id);
-        $fn=$serv->title;
-        $serv->title=request('title');
-        $serv->description=request('description');
-        $temp=request('image');
-        $filename='img/services/'.$temp;
-        $serv->image=$filename;
+        $fn=$serv->title_en;
+        $serv->title_en=request('title_en');
+        $serv->title_ar=request('title_ar');
+        $serv->description_en=request('description_en');
+        $serv->description_ar=request('description_ar');
         
-        $menu=Menu::where('title',"=",$fn)->first();
-        $menu->title=request('title');
-        $menu->url="services/menu/".$serv->title;
-$menu->save();
+        $image=request()->image;
+        if($image==null)
+        {
+
+        }
+        else{
+            $imageName = md5(uniqid(rand() * (time()))) . '.' . $image->getClientOriginalExtension();
+            $savePath = public_path(self::UPLOAD_PATH . $imageName);
+            Image::make($image)->save($savePath, 100);
+            $fullImagePath =$imageName;
+            $serv->image=$fullImagePath;
+            
+        }
+        $serv->Menu_id=Menu::where('title_en',request('menu'))->first()->id;
         $serv->save();
-        //File::move("C://xampp/htdocs/pim/resources/views/services/".$fn.'.blade.php',"C://xampp/htdocs/pim/resources/views/services/".request('title').'.blade.php');
-        //dd(request()->all());
+        session()->flash('message','Page Updated!');
+        
+        return redirect('/admin');
+    }
+
+
+    public function updatemenu($id)
+    {
+        $temp = Menu::find($id);
+        $menu_name = $temp->title_en;
+        $menu_name_ar = $temp->title_ar;
+        
+        $menu = Menu::where('title_en', "=", $menu_name)->first();
+        $menu->title_en = request('title_en');
+        $menu->title_ar = request('title_ar');
+        
+        $menu->save();
+        session()->flash('message','Menu Updated!');
+        
         return redirect('/admin');
     }
 
 
     public function store()
     {
-    
-    $this->validate(request(),[
-       'title'=>'required',
-       'description'=>'required'
-       
-        ]);
-   
-     // $temp= File::get("C://xampp/htdocs/pim/resources/views/layouts/new-service-layout.blade.php");
-       
-
-    
-       // File::put("C://xampp/htdocs/pim/resources/views/services/".request('title').'.blade.php',$temp);
+        $this->validate(request(),[
+            'title_ar'=>'required',
+            'title_en'=>'required',
+            'description_en'=>'required',
+            'description_ar'=>'required',
+            'image'=>'required'
+             ]);
         $serv=new Service;
-        $serv->title=request('title');
-        $serv->description=request('description');
-        $temp=request('image');
-        $filename='img/services/'.$temp;
-        $serv->image=$filename;
+        $serv->title_en=request('title_en');
+        $serv->title_ar=request('title_ar');
+        $serv->description_en=request('description_en');
+        $serv->description_ar=request('description_ar');
+        $image=request()->image;
+        $imageName = md5(uniqid(rand() * (time()))) . '.' . $image->getClientOriginalExtension();
+        $savePath = public_path(self::UPLOAD_PATH . $imageName);
+        Image::make($image)->save($savePath, 100);
+        $fullImagePath =$imageName;
+        $serv->image=$fullImagePath;
+        $serv->Menu_id=Menu::where('title_en',request('submenu'))->first()->id;
         $serv->save();
-    
-    //File::put("C://xampp/htdocs/pim/resources/views/services/".request('title').'.blade.php','John Doe is a good boy');
-
-
-    $menu=new Menu;
-    $menu->title=request('title');
-    if (isset($_POST['menu'])) {
-        $menu->parent_id='0';
-        // Checkbox is selected
-    } else {
-        $menu->parent_id=Menu::where('title',request('submenu'))->first()->id;
-    }
-    
-   // $menu->url=request('url');
-   $menu->url="services/menu/".request('title'); 
-   
-   $menu->save();
-
-    //dd(request()->all());
-    return redirect('/admin');
-    }
-
-    public function destroy($id)
-    {
-        
-        $serv=Service::find($id);
-        $menu=Menu::where('title',"=",$serv->title)->first();
-        //$temp=$menu->title;
-        //File::delete("C://xampp/htdocs/pim/resources/views/services/".$temp.'.blade.php');
-        $menu->delete();
-        
-        $serv->delete();
+        session()->flash('message','Page Added!');
         
         return redirect('/admin');
     }
 
-    public function del()
+    public function destroy($id)
     {
-       $menu= Menu::where('title',request('submenu'))->first();
-       //$temp=$menu->title;
-      // File::delete("C://xampp/htdocs/pim/resources/views/services/".$temp.'.blade.php');
+        $serv=Service::find($id);
+        File::delete('uploads/'.$serv->image);
+        $serv->delete();
+        session()->flash('message','Page Deleted!');
         
-       Menu::where('title',request('submenu'))->delete();
-    return redirect('/admin');
+        return redirect('/admin');
     }
 
-
-
-
-
+    public function del($id)
+    {
+        $menu= Menu::find($id)->delete();
+        session()->flash('message','Main Menu Deleted!');
+        
+        return redirect('/admin');
+    }
 }

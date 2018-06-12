@@ -41,7 +41,7 @@
       <div class="item">
       
     @endif
-      <img src="{{$slide->image }}"
+      <img src="{{asset('uploads/'.$slide->image)}}"
                                 data-bgposition="center center"
                                 data-bgfit="cover"
                                 data-bgrepeat="no-repeat"
@@ -93,15 +93,15 @@
             <div class="mainflip">
             <div class="frontside">
             <div class="card" style="width:20rem;">
-            <img class="card-img-top" src="{{$s->image}}" alt="card image">
+            <img class="card-img-top" src="{{asset('uploads/'.$s->image)}}" alt="card image">
            
             </div>
             </div>
             <div class="backside">
             <div class="card" style="width:20rem;">
             <div class="card-body">
-            <h5>{{$s->title}}</h5>
-            <a href="{{ url('services/'.$s->id) }}" class="btn btn-info btn-md text-center">Click Here</a>
+            <h5>{{$s->title_en}}</h5>
+            <a href="{{ url('services_en/'.$s->id) }}" class="btn btn-info btn-md text-center">Click Here</a>
             </div>
             
             </div>

@@ -6,17 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Menu extends Model
 {
-    public function parent()
+    public function services()
     {
-        return $this->belongsTo('App\Menu', 'parent_id');
+        return $this->hasMany('App\Service');
     }
 
-    public function children()
-    {
-        return $this->hasMany('App\Menu', 'parent_id');
-    }
-
-
+   
 
 
 }

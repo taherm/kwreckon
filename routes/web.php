@@ -1,5 +1,6 @@
 <?php
 use App\Service;
+use App\Menu;
 use App\Slider;
 /*
 |--------------------------------------------------------------------------
@@ -19,23 +20,42 @@ Route::get('/', function () {
     return view('index',compact('slider','ser'));
 });
 
+Route::get('/home-ar', function () {
+    $slider=Slider::all();
+    $ser=Service::all();
+
+    return view('ar.index',compact('slider','ser'));
+});
 
 Route::get('/about', function () {
     return view('about');
 });
 
+Route::get('/about-ar', function () {
+    return view('ar.about');
+});
 
 Route::get('/contact', function () {
     return view('contact');
+});
+
+
+Route::get('/contact-ar', function () {
+    return view('ar.contact');
 });
 
 Route::get('/services', function () {
     return view('services');
 });
 
-Route::get('/services/cfo', function () {
+Route::get('/cfo-en', function () {
     return view('services.cfo');
 });
+
+Route::get('/cfo-ar', function () {
+    return view('services.cfo-ar');
+});
+
 
 Route::get('/services/bookkeeping', function () {
     return view('services.bookkeeping');
@@ -46,49 +66,64 @@ Route::get('/services/financial-analysis', function () {
 });
 
 
-Route::get('admin','AdminController@index');
-Route::post('admin/slider','AdminController@add_slider');
-Route::delete('admin/del-slider','AdminController@delete_slider');
+
+Route::get('services_en/{id}', function ($id) {
+    $ser=Service::find($id);
+        return view('service-layout-en',compact('ser'));
+});
+
+Route::get('services_ar/{id}', function ($id) {
+    $ser=Service::find($id);
+        return view('service-layout-ar',compact('ser'));
+});
+
+Route::get('admin','AdminController@index')->middleware('auth');
+Route::post('admin/slider','AdminController@add_slider')->middleware('auth');
+Route::post('admin/album','AdminController@add_album')->middleware('auth');
+Route::delete('admin/del-slider','AdminController@delete_slider')->middleware('auth');
+Route::delete('admin/del-album','AdminController@delete_album')->middleware('auth');
 Route::get('admin/delete-slider',function () {
     return view('admin.delete-slider');
-});
+})->middleware('auth');
+Route::get('admin/delete-album',function () {
+    return view('admin.delete-album');
+})->middleware('auth');
 Route::get('admin/add-slider',function () {
     return view('admin.add-slider');
-});
+})->middleware('auth');
+Route::get('admin/add-album',function () {
+    return view('admin.add-album');
+})->middleware('auth');
+Route::get('admin/page','AdminController@show')->middleware('auth');
 Route::get('admin/create-page', function () {
-    return view('admin.pages');
-});
-Route::delete('del','AdminController@del');
-Route::post('sub-menu','AdminController@submenu');
-Route::post('main-menu','AdminController@mainmenu');
-Route::post('admin','AdminController@store');
-Route::delete('admin/{id}','AdminController@destroy');
-Route::get('admin/{id}/edit','AdminController@edit');
-Route::post('admin/{id}','AdminController@update');
+    return view('admin.create-page');
+})->middleware('auth');
+
+Route::post('sub-menu','AdminController@submenu')->middleware('auth');
+Route::post('main-menu','AdminController@mainmenu')->middleware('auth');
+Route::post('admin','AdminController@store')->middleware('auth');
+Route::delete('admin/{id}','AdminController@destroy')->middleware('auth');
+Route::get('admin/{id}/edit','AdminController@edit')->middleware('auth');
+Route::get('admin/{id}/edit_menu','AdminController@edit_menu')->middleware('auth');
+
+Route::post('admin/{id}','AdminController@update')->middleware('auth');
+Route::post('admin_edit/{id}','AdminController@updatemenu')->middleware('auth');
+
 Route::get('admin/sub-menu', function () {
     return view('admin.sub-menu');
-});
-Route::get('admin/main-menu', function () {
-    return view('admin.main-menu');
-});
+})->middleware('auth');
+Route::get('admin/menu', function () {
+    $cat =Menu::all();
+    return view('admin.menu',compact('cat'));
+})->middleware('auth');
 Route::get('admin/delete-menu', function () {
     return view('admin.delete-menu');
-});
+})->middleware('auth');
+Route::delete('admin/delete-menu/{id}','AdminController@del')->middleware('auth');
+Route::delete('admin/submenu_edit','AdminController@editsub')->middleware('auth');
 
 
 
-Route::get('services/create','ServicesController@create');
-Route::get('editmenu','MenuController@index');
-Route::get('services/menu/{url}','ServicesController@show');
-Route::get('services/{id}','ServicesController@find');
-Route::get('menu/{url}','MenuController@show');
-Route::post('editmenu','MenuController@store');
-Route::get('del', function () {
-    return view('menu.delete');
-});
-Route::delete('deletemenu','MenuController@del');
-Route::get('services','ServicesController@index');
-Route::post('services/{id}','ServicesController@update');
-Route::get('services/{id}/edit','ServicesController@edit');
-Route::post('services','ServicesController@store');
-Route::delete('services/{id}','ServicesController@destroy');
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');

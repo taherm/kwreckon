@@ -25,14 +25,22 @@
     
     <div class="collapse navbar-collapse" id="myNavbar">
       
-      <ul class="nav navbar-nav navbar-right">
-      @foreach($cat as $item)
-			                @if($item->children->count() > 0)
+    <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="/home-ar"> Home</a>
+            </li>
+            <li>
+              <a href="/about-ar">
+                 About Us
+              </a>
+            </li>
+            @foreach($cat as $item)
+			                @if($item->services->count())
 							<li class="dropdown">
-								<a href="{{ url($item->url) }}" class="dropdown-toggle disabled" data-toggle="dropdown" data-hover="dropdown" data-delay="0" data-close-others="false">{{$item->title}} <i class="fa fa-angle-down"></i></a>
+								<a href=""onclick="return false" class="dropdown-toggle disabled" data-toggle="dropdown" data-hover="dropdown" data-delay="0" data-close-others="false">{{$item->title_en}} <i class="fa fa-angle-down"></i></a>
 								<ul class="dropdown-menu">
-									@foreach($item->children as $submenu)
-					<li><a href="{{ url($submenu->url) }}">{{$submenu->title}}</a></li>
+								@foreach($item->services as $submenu)
+					<li><a href="{{url('services_en'.'/'.$submenu->id)}}">{{$submenu->title_en}}</a></li>
 					@endforeach
 				</ul>
 			</li>
@@ -40,11 +48,30 @@
 							
 					
 				@else
-				<li><a href="{{ url($item->url) }}">{{$item->title}}</a></li>
+				<li><a href="">{{$item->title_en}}</a></li>
 				@endif
 				@endforeach
-						</ul>
-						
+
+            <li>
+              <a href="/contact-ar"> Contact Us</a>
+            </li>
+            <li>
+              <a href="/home-ar"> العربية
+
+              </a>
+            </li>
+
+             <li>
+              <a href="/cfo-en"> CFO Services
+
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <span class="glyphicon glyphicon-search"></span>
+              </a>
+            </li>
+          </ul>
     </div>
   </div>
 </nav>
