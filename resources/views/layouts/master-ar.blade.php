@@ -83,7 +83,7 @@
 <!-- Footer -->
 <footer class="text-center" id="main-footer">
           <div>
-              <p class="pull-left" style="padding:10px">IdeasOwners</p> 
+          <a href="{{url('http://ideasowners.net/')}}">  <p class="pull-left" style="padding:10px">IdeasOwners</p> </a>
             <a class="up-arrow pull-right" href="#myPage" style="padding:10px" data-toggle="tooltip" title="TO TOP">
     <span class="glyphicon glyphicon-chevron-up"></span>
   </a><br><br>

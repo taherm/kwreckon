@@ -66,9 +66,9 @@
 </div>
 </div>
 
-<div class="container text-center">
+<div class="container">
 
-  <p>
+  <p style="font-size: 18px;" class="text-justify">
 
     Maintaining an accurate accounting record is critical part of any business, so the success of your business depends on those records. Accounting records help you evaluate your business performance by identifying any weakness in the operation this allowing you to take timely corrective action.
     
@@ -100,8 +100,8 @@
             <div class="backside">
             <div class="card" style="width:20rem;">
             <div class="card-body">
-            <h5>{{$s->title_en}}</h5>
-            <a href="{{ url('services_en/'.$s->id) }}" class="btn btn-info btn-md text-center">Click Here</a>
+           <center> <h5 class="text-center">{{$s->title_en}}</h5></center>
+           <center><a href="{{ url('services_en/'.$s->id) }}" class="btn btn-info btn-md text-center">Click Here</a></center>
             </div>
             
             </div>

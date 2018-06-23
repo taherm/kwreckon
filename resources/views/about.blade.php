@@ -59,7 +59,7 @@
             </tr>
           </tbody>
         </table>
-        <hr style="border: 3px solid;" />
+        <hr style="border: 1px solid;" />
         <table class="table">
           <tbody>
             <tr>

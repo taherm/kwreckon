@@ -19,7 +19,9 @@
     <br>
 
     <div class="container">
-    <p>
+   
+
+    <p style="color: black;text-align:justify; font-size: 18px; line-height: 30px;">
                 {!!$ser->description_en!!}
                  </p>
     </div>

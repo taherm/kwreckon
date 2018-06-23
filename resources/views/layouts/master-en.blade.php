@@ -30,7 +30,7 @@
               <a href="/home-ar"> Home</a>
             </li>
             <li>
-              <a href="/about-ar">
+              <a href="/about">
                  About Us
               </a>
             </li>
@@ -53,7 +53,7 @@
 				@endforeach
 
             <li>
-              <a href="/contact-ar"> Contact Us</a>
+              <a href="/contact"> Contact Us</a>
             </li>
             <li>
               <a href="/home-ar"> العربية
@@ -84,7 +84,7 @@
 <!-- Footer -->
 <footer class="text-center" id="main-footer">
           <div>
-              <p class="pull-left" style="padding:10px">IdeasOwners</p> 
+             <a href="{{url('http://ideasowners.net/')}}"> <p class="pull-left" style="padding:10px">IdeasOwners</p> </a> 
             <a class="up-arrow pull-right" href="#myPage" style="padding:10px" data-toggle="tooltip" title="TO TOP">
     <span class="glyphicon glyphicon-chevron-up"></span>
   </a><br><br>
